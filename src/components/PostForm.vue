@@ -43,11 +43,15 @@ export default {
 form {
   display: flex;
   flex-direction: column;
-
- 
 }
 
 .flexE {
   align-self: flex-end;
+}
+
+.title {
+  text-align: center;
+  color: teal;
+  font-weight: 200;
 }
 </style>
