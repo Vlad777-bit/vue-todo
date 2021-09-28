@@ -31,7 +31,22 @@
     />
 
     <div v-else>Идёт загрузка...</div>
-  </div>
+    <!--TODO-->
+    <!-- Сделать декампозицию пагинации -->
+    <div class="page__wrapper">
+      <div 
+        class="page"
+        v-for="pageN in totalPage"
+        :key="pageN"
+        :class="{
+          current__page: page === pageN,
+        }"
+        @click="chengePage(pageN)"
+      >
+        {{ pageN }}
+      </div>
+    </div>
+  </div> 
 </template>
 
 <script>
@@ -57,6 +72,9 @@ export default {
         {value: 'title', name: 'По названию'},
         {value: 'body', name: 'По содержанию'}
       ],
+      page: 1,
+      limit: 10,
+      totalPage: 0,
     };
   },
 
@@ -82,13 +100,23 @@ export default {
         //   .then(response => response.json())
         //   .then(json => this.posts = json)
 
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit,
+          }
+        });
+        this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limit)
         this.posts = response.data;
       } catch (e) {
         alert(e);
       } finally {
         this.isPostLoading = false;
       }
+    },
+
+    chengePage(pageNum) {
+      this.page = pageNum;
     }
   },
 
@@ -108,8 +136,8 @@ export default {
   },
 
   watch: {
-    selectedSort(newValue) {
-      this.posts.sort()
+    page() {
+      this.fetchPosts();
     }
   }
 };
@@ -141,5 +169,20 @@ body {
   margin: 15px 0;
   display: flex;
   justify-content: space-between; 
+}
+
+.page__wrapper {
+  margin-top: 15px;
+  display: flex;
+}
+
+.page {
+  border: 1px solid teal;
+  padding: 10px;
+}
+
+.current__page {
+  background-color: teal;
+  color:sandybrown;
 }
 </style>
