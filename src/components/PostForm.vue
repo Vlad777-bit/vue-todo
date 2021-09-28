@@ -10,7 +10,13 @@
       v-model="post.body"
     />
 
-    <my-button class="flexE" @click="createPost">Создать</my-button>
+    <my-button 
+      class="flexE"   
+      @click="createPost"
+      @keyup.enter="createPost"
+    >
+      Создать
+    </my-button>
   </form>
 </template>
 

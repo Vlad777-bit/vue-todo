@@ -2,19 +2,30 @@
   <div class="container">
     <h3>Страница с постами</h3>
 
-    <my-button 
-      @click="showDialog" 
-      class="mt15"
-    >
-      Создать пост
-    </my-button>
+    <my-input
+      v-model="searchQuery"
+      placeholder="Поиск"
+    />
+
+   <div class="app__btns">
+      <my-button 
+        @click="showDialog" 
+      >
+        Создать пост
+      </my-button>
+
+      <my-select
+        v-model="selectedSort"
+        :options="sortOptions "
+      ></my-select>
+   </div>
 
     <my-dialog v-model:show="dialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
 
     <post-list 
-      :posts="posts"  
+      :posts="sortedAndSeachedPosts"  
       @remove="removePost" 
       v-if="!isPostLoading"
     />
@@ -40,6 +51,12 @@ export default {
       posts: [],
       dialogVisible: false,
       isPostLoading: false,
+      selectedSort: '',
+      searchQuery: '', 
+      sortOptions: [
+        {value: 'title', name: 'По названию'},
+        {value: 'body', name: 'По содержанию'}
+      ],
     };
   },
 
@@ -61,6 +78,10 @@ export default {
       try {
         this.isPostLoading = true;
 
+        // const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10')
+        //   .then(response => response.json())
+        //   .then(json => this.posts = json)
+
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
         this.posts = response.data;
       } catch (e) {
@@ -73,6 +94,23 @@ export default {
 
   mounted() {
     this.fetchPosts();
+  },
+
+  computed: {
+    sortedPost() {
+      return [...this.posts]
+        .sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]))
+    },
+
+    sortedAndSeachedPosts() {
+      return this.sortedPost.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    }
+  },
+
+  watch: {
+    selectedSort(newValue) {
+      this.posts.sort()
+    }
   }
 };
 </script>
@@ -97,5 +135,11 @@ body {
 
 .mt15 {
   margin: 15px 0;
+}
+
+.app__btns {
+  margin: 15px 0;
+  display: flex;
+  justify-content: space-between; 
 }
 </style>
