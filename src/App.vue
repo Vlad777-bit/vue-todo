@@ -31,21 +31,13 @@
     />
 
     <div v-else>Идёт загрузка...</div>
-    <!--TODO-->
-    <!-- Сделать декампозицию пагинации -->
-    <div class="page__wrapper">
-      <div 
-        class="page"
-        v-for="pageN in totalPage"
-        :key="pageN"
-        :class="{
-          current__page: page === pageN,
-        }"
-        @click="chengePage(pageN)"
-      >
-        {{ pageN }}
-      </div>
-    </div>
+
+    <my-pogination
+      :totalPage="totalPage"
+      :page="page"
+      @paginationChange="changePage"
+    >
+    </my-pogination>
   </div> 
 </template>
 
@@ -115,7 +107,7 @@ export default {
       }
     },
 
-    chengePage(pageNum) {
+    changePage(pageNum) {
       this.page = pageNum;
     }
   },
@@ -169,20 +161,5 @@ body {
   margin: 15px 0;
   display: flex;
   justify-content: space-between; 
-}
-
-.page__wrapper {
-  margin-top: 15px;
-  display: flex;
-}
-
-.page {
-  border: 1px solid teal;
-  padding: 10px;
-}
-
-.current__page {
-  background-color: teal;
-  color:sandybrown;
 }
 </style>
