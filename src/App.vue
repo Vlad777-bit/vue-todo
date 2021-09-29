@@ -32,12 +32,14 @@
 
     <div v-else>Идёт загрузка...</div>
 
-    <my-pogination
+    <div ref="observer" class="observer"></div>
+
+    <!-- <my-pogination
       :totalPage="totalPage"
       :page="page"
       @paginationChange="changePage"
     >
-    </my-pogination>
+    </my-pogination> -->
   </div> 
 </template>
 
@@ -107,13 +109,42 @@ export default {
       }
     },
 
-    changePage(pageNum) {
-      this.page = pageNum;
-    }
+    async loadMorePosts() {
+      try {
+        this.page += 1; 
+
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit,
+          }
+        });
+        this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limit)
+        this.posts = [...this.posts, ...response.data ];
+      } catch (e) {
+        alert(e);
+      }
+    },
+
+    // changePage(pageNum) {
+    //   this.page = pageNum;
+    // }
   },
 
   mounted() {
     this.fetchPosts();
+
+    const options = { 
+    rootMargin: '0px',
+    threshold: 1.0
+    }
+    const callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPage ) {
+        this.loadMorePosts();
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
 
   computed: {
@@ -128,9 +159,9 @@ export default {
   },
 
   watch: {
-    page() {
-      this.fetchPosts();
-    }
+    // page() {
+    //   this.fetchPosts();
+    // }
   }
 };
 </script>
@@ -161,5 +192,10 @@ body {
   margin: 15px 0;
   display: flex;
   justify-content: space-between; 
+}
+
+.observer {
+  height: 30px;
+  background-color: saddlebrown;
 }
 </style>
