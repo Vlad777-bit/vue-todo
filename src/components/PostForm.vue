@@ -4,6 +4,7 @@
     <my-input
       placeholder="Название поста"
       v-model="post.title"
+      v-focus
     />
     <my-input
       placeholder="Описание"
