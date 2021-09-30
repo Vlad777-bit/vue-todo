@@ -1,13 +1,13 @@
 <template>
-$END$
+  <div>
+    <h1 class="title">Добро пожаловать!!!</h1>
+  </div>
 </template>
 
 <script>
-export default {
-name: "Main"
-}
+export default {}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>
